@@ -1,7 +1,7 @@
 {
-  "name": "worker-proxy",
-  "version": "1.2.5",
-  "description": "thread-local proxy for a given service spawned in dedicated Worker thread",
+  "name": "cbox-rx",
+  "version": "0.0.1",
+  "description": "thin RXJS abstraction layer for the encrypted pouchDB storage of a Cryptobox",
   "main": "dist",
   "browser": "dist/bundle.js",
   "scripts": {
@@ -25,15 +25,17 @@
     "test:ci:coveralls": "cat spec/reports/coverage/lcov.info | sed -e 's/SF:\\.\\.\\/\\.\\.\\//SF:/' | coveralls",
     "test:ci": "karma start spec/karma-coverage.conf.js --single-run && remap-istanbul -i spec/reports/coverage/chrom*/coverage.json -o spec/reports/coverage/lcov.info -t lcovonly",
     "test:web:serve": "http-server -c-1 -o -p 6510 spec/web",
-    "test:web": "browserify spec/*.spec.ts -p [ tsify --project spec ] -t uglifyify --exclude bluebird --exclude debug -o spec/web/index.spec.js && npm run test:web:serve",
+    "test:web": "browserify spec/*.spec.ts -p [ tsify --project spec ] -t uglifyify --exclude bluebird --exclude debug -o spec/web/index.spec.js && npm run test:web:serve"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/zenyway/worker-proxy.git"
+    "url": "git+https://github.com/zenyway/cbox-rx.git"
   },
   "keywords": [
-    "worker",
-    "proxy"
+    "cryptobox",
+    "pouchDB",
+    "crypto",
+    "rxjs"
   ],
   "author": {
     "name": "Stephane M. Catala",
@@ -41,9 +43,9 @@
   },
   "license": "SEE LICENSE IN LICENSE",
   "bugs": {
-    "url": "https://github.com/zenyway/worker-proxy/issues"
+    "url": "https://github.com/zenyway/cbox-rx/issues"
   },
-  "homepage": "https://github.com/zenyway/worker-proxy#readme",
+  "homepage": "https://github.com/zenyway/cbox-rx#readme",
   "dependencies": {
     "@types/bluebird": "^2.0.29",
     "@types/debug": "0.0.28",

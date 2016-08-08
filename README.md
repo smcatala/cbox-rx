@@ -1,21 +1,21 @@
-# cbox-vault [![Join the chat at https://gitter.im/ZenyWay/cbox-vault](https://badges.gitter.im/ZenyWay/cbox-vault.svg)](https://gitter.im/ZenyWay/cbox-vault?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-[![NPM](https://nodei.co/npm/cbox-vault.png?compact=true)](https://nodei.co/npm/cbox-vault/)
-[![build status](https://travis-ci.org/ZenyWay/cbox-vault.svg?branch=master)](https://travis-ci.org/ZenyWay/cbox-vault)
-[![coverage status](https://coveralls.io/repos/github/ZenyWay/cbox-vault/badge.svg?branch=master)](https://coveralls.io/github/ZenyWay/cbox-vault)
-[![Dependency Status](https://gemnasium.com/badges/github.com/ZenyWay/cbox-vault.svg)](https://gemnasium.com/github.com/ZenyWay/cbox-vault)
+# cbox-rx [![Join the chat at https://gitter.im/ZenyWay/cbox-rx](https://badges.gitter.im/ZenyWay/cbox-rx.svg)](https://gitter.im/ZenyWay/cbox-rx?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![NPM](https://nodei.co/npm/cbox-rx.png?compact=true)](https://nodei.co/npm/cbox-rx/)
+[![build status](https://travis-ci.org/ZenyWay/cbox-rx.svg?branch=master)](https://travis-ci.org/ZenyWay/cbox-rx)
+[![coverage status](https://coveralls.io/repos/github/ZenyWay/cbox-rx/badge.svg?branch=master)](https://coveralls.io/github/ZenyWay/cbox-rx)
+[![Dependency Status](https://gemnasium.com/badges/github.com/ZenyWay/cbox-rx.svg)](https://gemnasium.com/github.com/ZenyWay/cbox-rx)
 
-abstraction for encrypted document storage in pouchDB
+thin RXJS abstraction layer for the encrypted pouchDB storage of a Cryptobox
 
 # <a name="api"></a> API v0.0.1 experimental
 `ES5` and [`Typescript`](http://www.typescriptlang.org/) compatible.
 Coded in `Typescript 2`.
 
 ## specs
-run the [unit tests](https://cdn.rawgit.com/ZenyWay/cbox-vault/master/spec/web/index.html)
+run the [unit tests](https://cdn.rawgit.com/ZenyWay/cbox-rx/master/spec/web/index.html)
 in your browser.
 
 ## example
-a live version of this example can be viewed [here](https://cdn.rawgit.com/ZenyWay/cbox-vault/master/spec/example/index.html)
+a live version of this example can be viewed [here](https://cdn.rawgit.com/ZenyWay/cbox-rx/master/spec/example/index.html)
 in the browser console,
 or by cloning this repository and running the following commands from a terminal:
 ```bash
