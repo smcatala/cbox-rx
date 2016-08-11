@@ -47,6 +47,7 @@
   },
   "homepage": "https://github.com/zenyway/cbox-rx#readme",
   "dependencies": {
+    "@reactivex/rxjs": "^5.0.0-beta.11",
     "@types/bluebird": "^2.0.29",
     "@types/debug": "0.0.28",
     "bluebird": "^3.4.1",
