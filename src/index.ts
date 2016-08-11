@@ -12,13 +12,102 @@
  * Limitations under the License.
  */
 ;
-
-import { isObject, isArrayLike, isFunction, isString, isNumber } from './utils'
+export interface OpgpKey {}// TODO import OpgpKey from 'opgp-service'
 
 import Promise = require('bluebird')
+import { Observable } from '@reactivex/rxjs'
 
 import { __assign as assign } from 'tslib'
 
 import debug = require('debug')
-const log = debug('worker-proxy')
+const log = debug('cbox-rx')
 
+/**
+ * @public
+ * @factory
+ * @param {CboxRxFactorySpec} Spec
+ * @return {CboxRx}
+ */
+export interface CboxRxFactory {
+  (spec: CboxRxFactorySpec): CboxRx
+}
+
+/**
+ * @public
+ */
+export interface CboxRxFactorySpec {
+  /**
+   * @public
+   * @prop {string} id of cbox (name of underlying database)
+   */
+  id: string
+  /**
+   * @public
+   * @prop {OpgpKey} key
+   */
+  key: OpgpKey
+}
+
+export interface CboxRx {
+  /**
+   * @public
+   * @method read
+   * rx operator that maps a sequence of {ReadSpec} objects
+   * to the corresponding documents from the cbox wrapped in
+   * {ReadStatus} objects
+   * @param {Observable<ReadSpec>} refs
+   * @param {ReadOpts} opts?
+   * @return {ReadStatus|ReadStatus[]}
+   * @error {} TODO
+   */
+  read (refs: Observable<ReadSpec>, opts?: ReadOpts):
+    Observable<ReadStatus|ReadStatus[]>
+  /**
+   * @public
+   * @method write
+   * rx operator that maps a sequence of {WriteSpec} objects
+   * to the {WriteStatus} objects resulting from storing the documents
+   * wrapped in the {WriteSpec} objects in the cbox
+   * @param {Observable<WriteSpec>} docs
+   * @param {WriteOpts} opts?
+   * @return {WriteStatus|WriteStatus[]}
+   * @error {} TODO
+   */
+  write (docs: Observable<WriteSpec>, opts?: WriteOpts):
+    Observable<WriteStatus|WriteStatus[]>
+}
+
+export interface ReadSpec extends DataSource {
+  opts?: ReadOpts
+}
+
+export interface WriteSpec extends DataSource {
+  opts?: WriteOpts
+}
+
+export interface DataSource {
+	src: DocRef[] | DocRef
+}
+
+export interface ReadStatus extends WriteStatus {
+  doc?: DocRef
+}
+
+export interface WriteStatus {
+  status: number
+  ref: DocRef
+  error?: Error
+}
+
+export interface DocRef {
+  _id: string
+  _rev?: string
+}
+
+export interface ReadOpts {
+  include_docs: boolean
+}
+
+export interface WriteOpts {
+  include_docs: boolean
+}
