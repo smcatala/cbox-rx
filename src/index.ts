@@ -30,6 +30,10 @@ const log = debug('cbox-rx')
  */
 export interface CboxRxFactory {
   (spec: CboxRxFactorySpec): CboxRx
+  defaults: {
+    read: ReadOpts,
+    write: WriteOpts
+  }
 }
 
 /**
@@ -51,16 +55,19 @@ export interface CboxRxFactorySpec {
   /**
    * @public
    * @prop {Object} opts? default options
+   * defaults to {CboxRxFactory#defaults}
    */
   opts?: {
     /**
      * @public
      * @prop {ReadOpts} read? default options for the {CboxRx#read} operator.
+     * defaults to {CboxRxFactory#defaults#read}
      */
     read?: ReadOpts,
     /**
      * @public
      * @prop {WriteOpts} read? default options for the {CboxRx#write} operator.
+     * defaults to {CboxRxFactory#defaults#write}
      */
     write?: WriteOpts
   }
@@ -81,7 +88,10 @@ export interface CboxRx {
    * rx operator that maps a sequence of {DocRef} document references
    * to the corresponding documents fetched and decrypted
    * from the local (Cryptobox)[https://www.npmjs.com/package/cryptobox].
-   * @param {Observable<DocRef|DocRef[]>} refs
+   * @generic {R extends DocRef[]|DocRef} a document reference,
+   * or an array of document references.
+   * @param {Observable<R>|PromiseLike<R>|ArrayLike<R>} refs
+   * a sequence-like input of document references.
    * @param {ReadOpts} opts?
    * @return {Observable<DocRef|DocRef[]>} the referenced document(s)
    * fetched and decrypted
@@ -89,8 +99,8 @@ export interface CboxRx {
    * @error {Error} when retrieving a document fails // TODO provide more detail on possible fetch errors
    * @error {Error} when decrypting a document fails // TODO provide more detail on possible decryption errors
    */
-  read (refs: Observable<DocRef|DocRef[]>, opts?: ReadOpts):
-    Observable<DocRef|DocRef[]>
+  read <R extends DocRef[]|DocRef> (refs: Observable<R>|PromiseLike<R>|ArrayLike<R>,
+    opts?: ReadOpts): Observable<DocRef|DocRef[]>
   /**
    * @public
    * @method write
@@ -98,19 +108,23 @@ export interface CboxRx {
    * to the local (Cryptobox)[https://www.npmjs.com/package/cryptobox],
    * and maps that input sequence to the corresponding sequence of documents
    * with updated {DocRef} reference.
-   * @param {Observable<DocRef|DocRef[]>} docs sequence of input documents
-   * that extend their own {DocRef} reference.
+   * @generic {D extends DocRef[]|DocRef} a referenced document,
+   * or an array of referenced documents.
+   * @param {Observable<D>|PromiseLike<D>|ArrayLike<D>} docs
+   * a sequence-like input of documents.
    * @param {WriteOpts} opts?
-   * @return {Observable<DocRef|DocRef[]>} sequence of the stored document(s),
-   * with updated {DocRef} references.
+   * @return {Observable<DocRef|DocRef[]>}
+   * sequence of the original plain document(s),
+   * with updated {DocRef} references after storage.
+   * note that all documents are encrypted prior to storage.
    * when the input `docs` sequence emits an array of documents,
    * this output sequence emits a corresponding array of documents,
    * in the same order.
    * @error {Error} when storing a document fails // TODO provide more detail on possible storage errors
    * @error {Error} when encrypting a document fails // TODO provide more detail on possible encryption errors
    */
-  write (docs: Observable<DocRef|DocRef[]>, opts?: WriteOpts):
-    Observable<DocRef|DocRef[]>
+  write <D extends DocRef[]|DocRef> (docs: Observable<D>|PromiseLike<D>|ArrayLike<D>,
+    opts?: WriteOpts): Observable<DocRef|DocRef[]>
 }
 
 /**
@@ -160,3 +174,6 @@ export interface WriteOpts {
   include_docs: boolean
   // TODO add options from pouchDB
 }
+
+declare const getCboxRx: CboxRxFactory
+export default getCboxRx

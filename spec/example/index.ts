@@ -42,17 +42,11 @@ const docs = [{
 
 // write docs to db
 const refs = sids.write(toObservable(docs))
-.do(debug('write:next'), debug('write:error'), debug('write:done'))
-.map(toRefs)
+.do(debug('write:next'), debug('write:error'), <any>debug('write:done'))
 
 // read docs from db
 sids.read(refs)
-.subscribe(debug('read:next'), debug('read:error'), debug('read:done'))
-
-function toRefs (res: Array<{id: string}>|{id: string}) {
-  return Array.isArray(res) ?
-  [ res.map(res => res.id), { include_docs: true } ] : res.id
-}
+.subscribe(debug('read:next'), debug('read:error'), <any>debug('read:done'))
 
 function toObservable (val:any): Observable<any> {
 	try {
