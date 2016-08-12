@@ -38,20 +38,11 @@ const docs = [{
   author: 'Jeroen Tel',
   release: '1987'
 }]]
-.map(doc => [ doc ])
 
 // write docs to db
-const refs = sids.write(toObservable(docs))
+const refs = sids.write(docs)
 .do(debug('write:next'), debug('write:error'), <any>debug('write:done'))
 
 // read docs from db
 sids.read(refs)
 .subscribe(debug('read:next'), debug('read:error'), <any>debug('read:done'))
-
-function toObservable (val:any): Observable<any> {
-	try {
-  	return Observable.from(val)
-  } catch (err) {
-  	return Observable.throw(err)
-  }
-}
