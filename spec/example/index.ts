@@ -15,10 +15,13 @@
 import getCboxRx from '../../src'
 import { Observable } from '@reactivex/rxjs'
 import * as debug from 'debug'
+const PouchDB = require('pouchdb-browser') // no valid type definitions for TS2
+
+const db = Promise.try(() => new PouchDB('sids'))
 
 const specs = {
-  id: 'sids',
-  key: {} // TODO unlocked private key
+  db: db,
+  key: {} // TODO unlocked key pair
 }
 const sids = getCboxRx(specs)
 
@@ -45,4 +48,11 @@ const refs = sids.write(docs)
 
 // read docs from db
 sids.read(refs)
-.subscribe(debug('read:next'), debug('read:error'), <any>debug('read:done'))
+.do(debug('read:next'), debug('read:error'), <any>debug('read:done'))
+.subscribe(undefined, () => destroy(db), () => destroy(db)) // finally
+
+function destroy (db: any) {
+  db.then((db: any) => Promise.try(db.destroy.bind(db)))
+  .then(debug('destroy:done'))
+  .catch(debug('destroy:err'))
+}

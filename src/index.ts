@@ -44,9 +44,9 @@ export interface CboxRxFactory {
 export interface CboxRxFactorySpec {
   /**
    * @public
-   * @prop {string} id of cbox (name of underlying database)
+   * @prop {PouchDB} db the database to wrap
    */
-  id: string
+  db: any // no valid PouchDB typings for TS2
   /**
    * @public
    * @prop {OpgpKey} key pair
@@ -77,9 +77,8 @@ export interface CboxRxFactorySpec {
  * @public
  * @interface {CboxRx}
  * a thin (RXJS)[https://www.npmjs.com/package/@reactivex/rxjs]
- * abstraction layer for the encrypted
- * (pouchDB)[https://www.npmjs.com/package/pouchdb] storage
- * of a (Cryptobox)[https://www.npmjs.com/package/cryptobox]
+ * abstraction layer (wrapper) for a given encrypted
+ * (pouchDB)[https://www.npmjs.com/package/pouchdb] instance.
  */
 export interface CboxRx {
   /**
