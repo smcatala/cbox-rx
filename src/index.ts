@@ -34,6 +34,8 @@ export interface CboxRxFactory {
 
 /**
  * @public
+ * @interface {CboxRxFactorySpec}
+ * specification object that defines a {CboxRx} instance
  */
 export interface CboxRxFactorySpec {
   /**
@@ -43,71 +45,118 @@ export interface CboxRxFactorySpec {
   id: string
   /**
    * @public
-   * @prop {OpgpKey} key
+   * @prop {OpgpKey} key pair
    */
   key: OpgpKey
+  /**
+   * @public
+   * @prop {Object} opts? default options
+   */
+  opts?: {
+    /**
+     * @public
+     * @prop {ReadOpts} read? default options for the {CboxRx#read} operator.
+     */
+    read?: ReadOpts,
+    /**
+     * @public
+     * @prop {WriteOpts} read? default options for the {CboxRx#write} operator.
+     */
+    write?: WriteOpts
+  }
 }
 
+/**
+ * @public
+ * @interface {CboxRx}
+ * a thin (RXJS)[https://www.npmjs.com/package/@reactivex/rxjs]
+ * abstraction layer for the encrypted
+ * (pouchDB)[https://www.npmjs.com/package/pouchdb] storage
+ * of a (Cryptobox)[https://www.npmjs.com/package/cryptobox]
+ */
 export interface CboxRx {
   /**
    * @public
    * @method read
-   * rx operator that maps a sequence of {ReadSpec} objects
-   * to the corresponding documents from the cbox wrapped in
-   * {ReadStatus} objects
-   * @param {Observable<ReadSpec>} refs
+   * rx operator that maps a sequence of {DocRef} document references
+   * to the corresponding documents fetched and decrypted
+   * from the local (Cryptobox)[https://www.npmjs.com/package/cryptobox].
+   * @param {Observable<DocRef|DocRef[]>} refs
    * @param {ReadOpts} opts?
-   * @return {ReadStatus|ReadStatus[]}
-   * @error {} TODO
+   * @return {Observable<DocRef|DocRef[]>} the referenced document(s)
+   * fetched and decrypted
+   * from the local (Cryptobox)[https://www.npmjs.com/package/cryptobox].
+   * @error {Error} when retrieving a document fails // TODO provide more detail on possible fetch errors
+   * @error {Error} when decrypting a document fails // TODO provide more detail on possible decryption errors
    */
-  read (refs: Observable<ReadSpec>, opts?: ReadOpts):
-    Observable<ReadStatus|ReadStatus[]>
+  read (refs: Observable<DocRef|DocRef[]>, opts?: ReadOpts):
+    Observable<DocRef|DocRef[]>
   /**
    * @public
    * @method write
-   * rx operator that maps a sequence of {WriteSpec} objects
-   * to the {WriteStatus} objects resulting from storing the documents
-   * wrapped in the {WriteSpec} objects in the cbox
-   * @param {Observable<WriteSpec>} docs
+   * rx operator that encrypts and stores the documents from an input sequence
+   * to the local (Cryptobox)[https://www.npmjs.com/package/cryptobox],
+   * and maps that input sequence to the corresponding sequence of documents
+   * with updated {DocRef} reference.
+   * @param {Observable<DocRef|DocRef[]>} docs sequence of input documents
+   * that extend their own {DocRef} reference.
    * @param {WriteOpts} opts?
-   * @return {WriteStatus|WriteStatus[]}
-   * @error {} TODO
+   * @return {Observable<DocRef|DocRef[]>} sequence of the stored document(s),
+   * with updated {DocRef} references.
+   * when the input `docs` sequence emits an array of documents,
+   * this output sequence emits a corresponding array of documents,
+   * in the same order.
+   * @error {Error} when storing a document fails // TODO provide more detail on possible storage errors
+   * @error {Error} when encrypting a document fails // TODO provide more detail on possible encryption errors
    */
-  write (docs: Observable<WriteSpec>, opts?: WriteOpts):
-    Observable<WriteStatus|WriteStatus[]>
+  write (docs: Observable<DocRef|DocRef[]>, opts?: WriteOpts):
+    Observable<DocRef|DocRef[]>
 }
 
-export interface ReadSpec extends DataSource {
-  opts?: ReadOpts
-}
-
-export interface WriteSpec extends DataSource {
-  opts?: WriteOpts
-}
-
-export interface DataSource {
-	src: DocRef[] | DocRef
-}
-
-export interface ReadStatus extends WriteStatus {
-  doc?: DocRef
-}
-
-export interface WriteStatus {
-  status: number
-  ref: DocRef
-  error?: Error
-}
-
+/**
+ * @public
+ * @interface {DocRef}
+ * a unique identifier (reference) of a JSON document,
+ * or a JSON document that extends its own {DocRef} reference.
+ * @see (JSON Document field description)[http://wiki.apache.org/couchdb/HTTP_Document_API#Special_Fields]
+ */
 export interface DocRef {
+  /**
+   * @public
+   * @prop {string} _id unique document identification string.
+   */
   _id: string
+  /**
+   * @public
+   * @prop {string} _rev? unique document revision identification string.
+   * defaults to the latest revision identification string
+   * of the referenced document.
+   */
   _rev?: string
 }
 
+/**
+ * @public
+ * @interface {ReadOpts}
+ * @see (pouchDB#get)[https://pouchdb.com/api.html#fetch_document] options
+ * for a single {DocRef} instance {DataSource}
+ * @see (pouhDB#allDocs)[https://pouchdb.com/api.html#batch_fetch] options
+ * for an array of {DocRef} instances {DataSource}
+ */
 export interface ReadOpts {
   include_docs: boolean
+  // TODO add options from pouchDB
 }
 
+/**
+ * @public
+ * @interface {WriteOpts}
+ * @see (pouchDB#put)[https://pouchdb.com/api.html#create_document] options
+ * for a single {DocRef} instance {DataSource}
+ * @see (pouchDB#bulkDocs)[https://pouchdb.com/api.html#batch_create] options
+ * for an array of {DocRef} instances {DataSource}
+ */
 export interface WriteOpts {
   include_docs: boolean
+  // TODO add options from pouchDB
 }
